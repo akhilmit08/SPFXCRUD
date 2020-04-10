@@ -13,6 +13,7 @@ import { ISPListItem } from "./ISPListItem";
 import * as jQuery from 'jquery';
 require('jquery-ui');
 import{SPComponentLoader}from'@microsoft/sp-loader';
+import { MSGraphClient } from '@microsoft/sp-http';
 
 export interface ICrudWebPartProps {
   description: string;
@@ -25,172 +26,29 @@ export default class CrudWebPart extends BaseClientSideWebPart<ICrudWebPartProps
     return Promise.resolve();
   }
   public render(): void {
+    this.context.msGraphClientFactory
+      .getClient()
+      .then((client: MSGraphClient): void => {        
+        client
+          .api('/me')
+          .get((error, response: any, rawResponse?: any) => {
     this.domElement.innerHTML = `
-    <div class="accordian">
-    <div class="${ styles.crud}">
-    <div class="${ styles.container}">
-    
-    <div class="${ styles.row}">
-    <h2>Insert Item to List</h2>
-    <hr/>
-        <div class="${ styles.column}">
-        Product Name:
-        </div>
-        <div class="${ styles.column}">
-        <input type='text' id='txtTitle'/>
-        </div>
-    <br/>
-        <div class="${ styles.column}">
-        Vendor:
-        </div>
-        <div class="${ styles.column}">
-        <select id="ddlVendor">
-        <option value="HP">HP</option>
-        <option value="DELL">DELL</option>
-        <option value="Lenovo">Lenovo</option>
-        <option value="Others">Others</option>
-        </select>            
-        </div>
-        <br/>
-        <div class="${ styles.column}">
-        Product Description:
-        </div>
-        <div class="${ styles.column}">
-        <input type='text' id='txtProductDescription'/>
-        </div>
-        <br/>
-        <div class="${ styles.column}">
-        Customer Name:
-        </div>
-        <div class="${ styles.column}">
-        <input type='text' id='txtCustomerName'/>
-        </div>
-        <br/>
-        <div class="${ styles.column}">
-        Customer Email:
-        </div>
-        <div class="${ styles.column}">
-        <input type='text' id='txtCustomerEmail'/>
-        </div>
-        <br/>
-        <div class="${ styles.column}">
-        Customer Phone:
-        </div>
-        <div class="${ styles.column}">
-        <input type='text' id='txtCustomerPhone'/>
-        </div>
-        <br/>
-        <div class="${ styles.column}">
-        Customer Address:
-        </div>
-        <div class="${ styles.column}">
-        <textarea id='txtCustomerAddress' rows="5" cols="40"></textarea>
-        </div>
-        <br/>
-        <div class="${ styles.column}">
-        <input type="submit" value="Insert Item" id="btnSubmit"><br/>
-        <div id="spListCreateItem"/>
-        </div>
-      </div>
-    </div>
+      <div class="${ styles.crud }">
+        <div class="${ styles.container }">
+          <div class="${ styles.row }">
+            <div class="${ styles.column }">
+              <span class="${ styles.title }">Welcome to SharePoint Framework Grap API Demo!</span>
+            
+              <p class="${ styles.description }"> Display Name: ${response.displayName}</p>
+              <p class="${ styles.description }">Email ID: ${response.mail}</p>
 
-  <div class="${ styles.container}">   
-  <div class="${ styles.row}">
-    <hr/>
-    <h2>Update List Item</h2>
-    <hr/>
-    <div class="${ styles.column}">
-     Enter Item ID: <input type='text' id='txtItemID'/> <input type="submit" value="Fetch Details" id="btnFetchDetails">
-    </div>
-    <br>
-    <div class="${ styles.column}">
-    Product Name:
-    </div>
-    <div class="${ styles.column}">
-    <input type='text' id='txtTitleUpdate'/>
-    </div>
-    <br/>
-    <div class="${ styles.column}">
-    Vendor:
-    </div>
-    <div class="${ styles.column}">
-    <select id="ddlVendorUpdate">
-    <option value="HP">HP</option>
-    <option value="DELL">DELL</option>
-    <option value="Lenovo">Lenovo</option>
-    <option value="Others">Others</option>
-    </select>            
-    </div>
-    <br/>
-    <div class="${ styles.column}">
-    Product Description:
-    </div>
-    <div class="${ styles.column}">
-    <input type='text' id='txtProductDescriptionUpdate'/>
-    </div>
-    <br/>
-    <div class="${ styles.column}">
-    Customer Name:
-    </div>
-    <div class="${ styles.column}">
-    <input type='text' id='txtCustomerNameUpdate'/>
-    </div>
-    <br/>
-    <div class="${ styles.column}">
-    Customer Email:
-    </div>
-    <div class="${ styles.column}">
-    <input type='text' id='txtCustomerEmailUpdate'/>
-    </div>
-    <br/>
-    <div class="${ styles.column}">
-    Customer Phone:
-    </div>
-    <div class="${ styles.column}">
-    <input type='text' id='txtCustomerPhoneUpdate'/>
-    </div>
-    <br/>
-    <div class="${ styles.column}">
-    Customer Address:
-    </div>
-    <div class="${ styles.column}">
-    <textarea id='txtCustomerAddressUpdate' rows="5" cols="40"></textarea>
-    </div>
-    <br/>
-    <div class="${ styles.column}">
-    <input type="submit" value="Update Item" id="btnUpdate"><br/>
-    <div id="spListCreateItemUpdate"/>
-    </div>
-
-    </div>
-    </div> 
-
-  <div class="${ styles.container}">   
-  <div class="${ styles.row}">
-    <hr/>
-    <h2>Delete List Item</h2>
-    <hr/>
-    <div class="${ styles.column}">
-     Enter Item ID: <input type='text' id='txtItemIDToDelete'/> <input type="submit" value="Delete List Item" id="btnDelete"><br/>
-     <div id="spListItemDeleteStatus" />
-    </div>
-    </div>
-    </div>
-
-    <div class="${ styles.container}">   
-    <div class="${ styles.row}">
-    <hr/>
-    <h2>Get All List Items</h2>
-    <hr/>
-    <div id="spListData" />
-    </div>
-    </div>
-</div>
-  </div>`;
-  (jQuery('.accordion',this.domElement)as any).accordion();
-    this.readAllItems();
-    this._setButtonEventHandlers();
-  }
+            </div>
+          </div>
+        </div>
+      </div>`;
+          });
+        });
+      }
 
   private _setButtonEventHandlers(): void {
     this.readAllItems();

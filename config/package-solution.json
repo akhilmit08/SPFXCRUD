@@ -4,7 +4,12 @@
     "name": "spfxcrud-client-side-solution",
     "id": "7cd77c0f-8d6b-4b46-9db3-9cd79a765158",
     "version": "1.0.0.0",
-    "includeClientSideAssets": true
+    "includeClientSideAssets": true,
+    "isDomainIsolated": false,
+    "webApiPermissionRequests": [{  
+      "resource": "Microsoft Graph",  
+      "scope": "User.ReadBasic.All"  
+  }]
   },
   "paths": {
     "zippedPackage": "solution/spfxcrud.sppkg"
