@@ -10,6 +10,9 @@ import styles from './CrudWebPart.module.scss';
 import * as strings from 'CrudWebPartStrings';
 import { ISPHttpClientOptions, SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 import { ISPListItem } from "./ISPListItem";
+import * as jQuery from 'jquery';
+require('jquery-ui');
+import{SPComponentLoader}from'@microsoft/sp-loader';
 
 export interface ICrudWebPartProps {
   description: string;
@@ -17,75 +20,81 @@ export interface ICrudWebPartProps {
 
 export default class CrudWebPart extends BaseClientSideWebPart<ICrudWebPartProps> {
 
+  protected onInit():Promise<void> {
+    SPComponentLoader.loadCss('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.min.css');
+    return Promise.resolve();
+  }
   public render(): void {
     this.domElement.innerHTML = `
-      <div class="${ styles.crud }">
-      <div class="${ styles.container}">
+    <div class="accordian">
+    <div class="${ styles.crud}">
+    <div class="${ styles.container}">
     
-      <div class="${ styles.row}">
-      <h2>Insert Item to List</h2>
-      <hr/>
-          <div class="${ styles.column}">
-          Product Name:
-          </div>
-          <div class="${ styles.column}">
-          <input type='text' id='txtTitle'/>
-          </div>
-      <br/>
-          <div class="${ styles.column}">
-          Vendor:
-          </div>
-          <div class="${ styles.column}">
-          <select id="ddlVendor">
-          <option value="HP">HP</option>
-          <option value="DELL">DELL</option>
-          <option value="Lenovo">Lenovo</option>
-          <option value="Others">Others</option>
-          </select>            
-          </div>
-          <br/>
-          <div class="${ styles.column}">
-          Product Description:
-          </div>
-          <div class="${ styles.column}">
-          <input type='text' id='txtProductDescription'/>
-          </div>
-          <br/>
-          <div class="${ styles.column}">
-          Customer Name:
-          </div>
-          <div class="${ styles.column}">
-          <input type='text' id='txtCustomerName'/>
-          </div>
-          <br/>
-          <div class="${ styles.column}">
-          Customer Email:
-          </div>
-          <div class="${ styles.column}">
-          <input type='text' id='txtCustomerEmail'/>
-          </div>
-          <br/>
-          <div class="${ styles.column}">
-          Customer Phone:
-          </div>
-          <div class="${ styles.column}">
-          <input type='text' id='txtCustomerPhone'/>
-          </div>
-          <br/>
-          <div class="${ styles.column}">
-          Customer Address:
-          </div>
-          <div class="${ styles.column}">
-          <textarea id='txtCustomerAddress' rows="5" cols="40"></textarea>
-          </div>
-          <br/>
-          <div class="${ styles.column}">
-          <input type="submit" value="Insert Item" id="btnSubmit"><br/>
-          <div id="spListCreateItem"/>
-          </div>
+    <div class="${ styles.row}">
+    <h2>Insert Item to List</h2>
+    <hr/>
+        <div class="${ styles.column}">
+        Product Name:
+        </div>
+        <div class="${ styles.column}">
+        <input type='text' id='txtTitle'/>
+        </div>
+    <br/>
+        <div class="${ styles.column}">
+        Vendor:
+        </div>
+        <div class="${ styles.column}">
+        <select id="ddlVendor">
+        <option value="HP">HP</option>
+        <option value="DELL">DELL</option>
+        <option value="Lenovo">Lenovo</option>
+        <option value="Others">Others</option>
+        </select>            
+        </div>
+        <br/>
+        <div class="${ styles.column}">
+        Product Description:
+        </div>
+        <div class="${ styles.column}">
+        <input type='text' id='txtProductDescription'/>
+        </div>
+        <br/>
+        <div class="${ styles.column}">
+        Customer Name:
+        </div>
+        <div class="${ styles.column}">
+        <input type='text' id='txtCustomerName'/>
+        </div>
+        <br/>
+        <div class="${ styles.column}">
+        Customer Email:
+        </div>
+        <div class="${ styles.column}">
+        <input type='text' id='txtCustomerEmail'/>
+        </div>
+        <br/>
+        <div class="${ styles.column}">
+        Customer Phone:
+        </div>
+        <div class="${ styles.column}">
+        <input type='text' id='txtCustomerPhone'/>
+        </div>
+        <br/>
+        <div class="${ styles.column}">
+        Customer Address:
+        </div>
+        <div class="${ styles.column}">
+        <textarea id='txtCustomerAddress' rows="5" cols="40"></textarea>
+        </div>
+        <br/>
+        <div class="${ styles.column}">
+        <input type="submit" value="Insert Item" id="btnSubmit"><br/>
+        <div id="spListCreateItem"/>
         </div>
       </div>
-      <div class="${ styles.container}">   
+    </div>
+
+  <div class="${ styles.container}">   
   <div class="${ styles.row}">
     <hr/>
     <h2>Update List Item</h2>
@@ -176,17 +185,20 @@ export default class CrudWebPart extends BaseClientSideWebPart<ICrudWebPartProps
     <div id="spListData" />
     </div>
     </div>
-      </div>`;
-      this._setButtonEventHandlers();
+</div>
+  </div>`;
+  (jQuery('.accordion',this.domElement)as any).accordion();
+    this.readAllItems();
+    this._setButtonEventHandlers();
   }
 
   private _setButtonEventHandlers(): void {
     this.readAllItems();
     this.domElement.querySelector('#btnSubmit').addEventListener('click', () => { this.createListItem(); });
-    this.domElement.querySelector('#btnFetchDetails').addEventListener('click', () => { this.fetchItemByID(); });
+   // this.domElement.querySelector('#btnFetchDetails').addEventListener('click', () => { this.fetchItemByID(); });
     this.domElement.querySelector('#btnUpdate').addEventListener('click', () => { this.updateListItem(); });
     this.domElement.querySelector('#btnDelete').addEventListener('click', () => { this._deleteListItemByID(); });
-    
+    jQuery("#btnFetchDetails").click(() => {this.fetchItemByID();});
   }
   private fetchItemByID(): void {
     let id: string= document.getElementById("txtItemID")["value"];

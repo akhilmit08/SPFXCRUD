@@ -11,7 +11,10 @@
       ]
     }
   },
-  "externals": {},
+  "externals": {
+    "jquery":"https://code.jquery.com/jquery-3.1.0.min.js",
+    "jquery-ui":"https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  },
   "localizedResources": {
     "CrudWebPartStrings": "lib/webparts/crud/loc/{locale}.js"
   }
